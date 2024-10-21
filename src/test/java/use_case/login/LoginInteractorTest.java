@@ -41,6 +41,43 @@ public class LoginInteractorTest {
         interactor.execute(inputData);
     }
 
+    @Test
+    public void successUserLoggedInTest() {
+        // 设置输入数据
+        LoginInputData inputData = new LoginInputData("Paul", "password");
+        LoginUserDataAccessInterface userRepository = new InMemoryUserDataAccessObject();
+
+        // 在登录之前，将 Paul 添加到数据访问仓库
+        UserFactory factory = new CommonUserFactory();
+        User user = factory.create("Paul", "password");
+        userRepository.save(user);
+
+        // 创建一个 successPresenter 来测试用例的期望输出
+        LoginOutputBoundary successPresenter = new LoginOutputBoundary() {
+            @Override
+            public void prepareSuccessView(LoginOutputData user) {
+                assertEquals("Paul", user.getUsername()); // 验证成功视图中的用户名
+            }
+
+            @Override
+            public void prepareFailView(String error) {
+                fail("Use case failure is unexpected.");
+            }
+        };
+
+        // 创建 Interactor 并执行登录用例
+        LoginInputBoundary interactor = new LoginInteractor(userRepository, successPresenter);
+
+        // 在登录之前，currentUser 应该是 null
+        assertNull(userRepository.getCurrentUser());
+
+        // 执行登录用例
+        interactor.execute(inputData);
+
+        // 验证登录成功后，currentUser 是否正确设置
+        assertEquals("Paul", userRepository.getCurrentUser());
+    }
+
 
     @Test
     public void failurePasswordMismatchTest() {
