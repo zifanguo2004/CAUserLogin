@@ -3,7 +3,6 @@ package data_access;
 import java.util.HashMap;
 import java.util.Map;
 
-import entity.CommonUserFactory;
 import entity.User;
 import use_case.change_password.ChangePasswordUserDataAccessInterface;
 import use_case.login.LoginUserDataAccessInterface;
@@ -21,7 +20,7 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
 
     private String currentUser;
 
-    public InMemoryUserDataAccessObject(CommonUserFactory commonUserFactory) {
+    public InMemoryUserDataAccessObject() {
     }
 
     @Override
@@ -37,6 +36,11 @@ public class InMemoryUserDataAccessObject implements SignupUserDataAccessInterfa
     @Override
     public User get(String username) {
         return users.get(username);
+    }
+
+    @Override
+    public void setCurrentUser(String name) {
+        this.currentUser = name;
     }
 
     @Override
